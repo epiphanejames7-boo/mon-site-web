@@ -71,7 +71,7 @@
         countdownHours: 72
       },
       contacts: {
-        email: "epiphanejmes7@gmail.com",
+        email: "epiphanejames7@gmail.com",
         phoneFormatted: "01 49 87 54 06",
         whatsAppInternational: "2290149875406"
       },
@@ -438,7 +438,7 @@
           </p>
           <div class="pt-2 flex flex-wrap gap-4 text-xs font-semibold text-slate-300 justify-center md:justify-start">
             <span class="bg-slate-900 px-3.5 py-2 rounded-xl border border-slate-800">📍 Cotonou, Bénin</span>
-            <span class="bg-slate-900 px-3.5 py-2 rounded-xl border border-slate-800">✉️ epiphanejmes7@gmail.com</span>
+            <span class="bg-slate-900 px-3.5 py-2 rounded-xl border border-slate-800">✉️ epiphanejames7@gmail.com</span>
             <span class="bg-slate-900 px-3.5 py-2 rounded-xl border border-slate-800">📱 WhatsApp : 01 49 87 54 06</span>
           </div>
         </div>
@@ -606,8 +606,8 @@
         <a id="btn-contact-wa" href="#" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-brandBlue hover:bg-blue-600 text-white font-black text-sm transition shadow-lg shadow-brandBlue/30 flex items-center justify-center gap-2">
           <span>💬 Échanger sur WhatsApp (01 49 87 54 06)</span>
         </a>
-        <a href="mailto:epiphanejmes7@gmail.com" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm font-bold hover:border-slate-500 transition">
-          ✉ epiphanejmes7@gmail.com
+        <a href="mailto:epiphanejames7@gmail.com" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm font-bold hover:border-slate-500 transition">
+          ✉ epiphanejames7@gmail.com
         </a>
       </div>
     </div>
@@ -840,185 +840,188 @@
       }, 800);
     }
   </script>
-  <!-- ============ PAIEMENT FEDAPAY : coller ce bloc juste AVANT la ligne </body> ============ -->
-<script>
-(function () {
-  var PAY_API = "/.netlify/functions/pay";
-  var KEY = "epiphane_order_v1";
-  var WA = "https://wa.me/2290149875406";
 
-  var modal = document.getElementById("checkout-modal");
-  var stepForm = document.getElementById("modal-step-form");
-  var stepSuccess = document.getElementById("modal-step-success");
-  var box = stepSuccess.parentElement;
+  <!-- ======================================================== -->
+  <!-- PAIEMENT FEDAPAY : remplace le faux paiement ci-dessus   -->
+  <!-- (le client voit le livre seulement si FedaPay confirme)  -->
+  <!-- ======================================================== -->
+  <script>
+  (function () {
+    var PAY_API = "/.netlify/functions/pay";
+    var KEY = "epiphane_order_v1";
+    var WA = "https://wa.me/2290149875406";
 
-  // Nouvelle étape : vérification du paiement
-  var stepCheck = document.createElement("div");
-  stepCheck.id = "modal-step-check";
-  stepCheck.className = "hidden text-center space-y-4 py-6";
-  stepCheck.innerHTML =
-    '<div id="check-icon" class="text-4xl">⏳</div>' +
-    '<h4 id="check-title" class="text-2xl font-black text-white"></h4>' +
-    '<p id="check-text" class="text-sm text-slate-300 leading-relaxed"></p>' +
-    '<button id="check-btn" type="button" class="hidden w-full py-3.5 bg-brandBlue hover:bg-blue-600 text-white font-black text-sm rounded-xl"></button>';
-  box.appendChild(stepCheck);
+    var modal = document.getElementById("checkout-modal");
+    var stepForm = document.getElementById("modal-step-form");
+    var stepSuccess = document.getElementById("modal-step-success");
+    var box = stepSuccess.parentElement;
 
-  function show(which) {
-    stepForm.classList.toggle("hidden", which !== "form");
-    stepSuccess.classList.toggle("hidden", which !== "success");
-    stepCheck.classList.toggle("hidden", which !== "check");
-    modal.classList.remove("hidden");
-  }
+    // Nouvelle étape : vérification du paiement
+    var stepCheck = document.createElement("div");
+    stepCheck.id = "modal-step-check";
+    stepCheck.className = "hidden text-center space-y-4 py-6";
+    stepCheck.innerHTML =
+      '<div id="check-icon" class="text-4xl">⏳</div>' +
+      '<h4 id="check-title" class="text-2xl font-black text-white"></h4>' +
+      '<p id="check-text" class="text-sm text-slate-300 leading-relaxed"></p>' +
+      '<button id="check-btn" type="button" class="hidden w-full py-3.5 bg-brandBlue hover:bg-blue-600 text-white font-black text-sm rounded-xl"></button>';
+    box.appendChild(stepCheck);
 
-  function setCheck(icon, title, text, btnLabel, btnAction) {
-    document.getElementById("check-icon").textContent = icon;
-    document.getElementById("check-title").textContent = title;
-    document.getElementById("check-text").textContent = text;
-    var b = document.getElementById("check-btn");
-    if (btnLabel) {
-      b.textContent = btnLabel;
-      b.onclick = btnAction;
-      b.classList.remove("hidden");
-    } else {
-      b.classList.add("hidden");
+    function show(which) {
+      stepForm.classList.toggle("hidden", which !== "form");
+      stepSuccess.classList.toggle("hidden", which !== "success");
+      stepCheck.classList.toggle("hidden", which !== "check");
+      modal.classList.remove("hidden");
     }
-    show("check");
-  }
 
-  function saveOrder(o) { try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {} }
-  function loadOrder() { try { return JSON.parse(localStorage.getItem(KEY)); } catch (e) { return null; } }
-
-  // 1) Ouverture du formulaire
-  window.openModal = function () { show("form"); };
-
-  // 2) Clic sur "Régler 6 750 FCFA" : création du paiement puis redirection vers FedaPay
-  window.handleOrderSubmit = async function (e) {
-    e.preventDefault();
-    var btn = document.getElementById("btn-submit-order");
-    var name = document.getElementById("order-name").value.trim();
-    var phone = document.getElementById("order-phone").value.trim();
-    var email = document.getElementById("order-email").value.trim();
-
-    btn.disabled = true;
-    btn.innerText = "Redirection vers le paiement...";
-    try {
-      var r = await fetch(PAY_API, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name, phone: phone, email: email })
-      });
-      var d = await r.json();
-      if (!r.ok || !d.url) throw new Error(d.error || "Erreur");
-      saveOrder({ id: d.id, ref: d.ref, name: name, phone: phone, email: email, confirmed: false });
-      window.location.href = d.url;
-    } catch (err) {
-      alert("Impossible de lancer le paiement. Réessayez dans un instant ou écrivez-nous sur WhatsApp.");
-      btn.disabled = false;
-      btn.innerText = "Régler 6 750 FCFA";
-    }
-  };
-
-  // 3) Affichage du livre, seulement si le paiement est confirmé
-  function showSuccess(order, d) {
-    order.confirmed = true;
-    order.pdf = d.pdf;
-    order.epub = d.epub;
-    order.wa = d.whatsapp;
-    saveOrder(order);
-
-    document.getElementById("success-client-name").textContent = order.name || "";
-    document.getElementById("success-client-phone").textContent = order.phone || "";
-    var label = stepSuccess.querySelector("span");
-    if (label) label.textContent = "Paiement confirmé";
-
-    var dl = stepSuccess.querySelector("a[onclick], a[data-dl]");
-    if (dl) {
-      dl.removeAttribute("onclick");
-      dl.setAttribute("data-dl", "1");
-      dl.href = d.pdf || "#";
-      dl.target = "_blank";
-      dl.rel = "noopener noreferrer";
-      dl.textContent = "📥 Télécharger le livre (PDF)";
-
-      var old = document.getElementById("dl-epub");
-      if (old) old.remove();
-      if (d.epub) {
-        var dl2 = dl.cloneNode(true);
-        dl2.id = "dl-epub";
-        dl2.href = d.epub;
-        dl2.textContent = "📥 Télécharger la version EPUB";
-        dl2.classList.add("mt-2");
-        dl.parentNode.insertBefore(dl2, dl.nextSibling);
+    function setCheck(icon, title, text, btnLabel, btnAction) {
+      document.getElementById("check-icon").textContent = icon;
+      document.getElementById("check-title").textContent = title;
+      document.getElementById("check-text").textContent = text;
+      var b = document.getElementById("check-btn");
+      if (btnLabel) {
+        b.textContent = btnLabel;
+        b.onclick = btnAction;
+        b.classList.remove("hidden");
+      } else {
+        b.classList.add("hidden");
       }
+      show("check");
     }
 
-    var waBase = d.whatsapp || WA;
-    var msg = encodeURIComponent(
-      "Bonjour Epiphane, j'ai payé le livre « Comprendre la sécurité informatique ».\n\n- Nom : " +
-      (order.name || "") + "\n- Téléphone : " + (order.phone || "") +
-      "\n- E-mail : " + (order.email || "") +
-      "\n\nMerci de m'ajouter à la communauté privée."
-    );
-    var wl = document.getElementById("success-wa-link");
-    if (wl) wl.href = waBase + "?text=" + msg;
+    function saveOrder(o) { try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {} }
+    function loadOrder() { try { return JSON.parse(localStorage.getItem(KEY)); } catch (e) { return null; } }
 
-    show("success");
-    addReturnButton(order);
-  }
+    // 1) Ouverture du formulaire
+    window.openModal = function () { show("form"); };
 
-  // Bouton pour retrouver son livre plus tard (même appareil)
-  function addReturnButton(order) {
-    if (document.getElementById("my-book-btn")) return;
-    var b = document.createElement("button");
-    b.id = "my-book-btn";
-    b.type = "button";
-    b.textContent = "📥 Retrouver mon livre";
-    b.className = "fixed bottom-4 left-4 z-40 px-4 py-3 rounded-xl bg-brandBlue text-white text-xs font-black shadow-xl";
-    b.onclick = function () {
-      showSuccess(order, { pdf: order.pdf, epub: order.epub, whatsapp: order.wa });
-    };
-    document.body.appendChild(b);
-  }
+    // 2) Clic sur "Régler 6 750 FCFA" : création du paiement puis redirection vers FedaPay
+    window.handleOrderSubmit = async function (e) {
+      e.preventDefault();
+      var btn = document.getElementById("btn-submit-order");
+      var name = document.getElementById("order-name").value.trim();
+      var phone = document.getElementById("order-phone").value.trim();
+      var email = document.getElementById("order-email").value.trim();
 
-  // 4) Vérification auprès du serveur (qui interroge FedaPay)
-  function wait(ms) { return new Promise(function (res) { setTimeout(res, ms); }); }
-
-  async function verify(order) {
-    setCheck("⏳", "Vérification du paiement...", "Merci de patienter quelques secondes. Ne fermez pas cette page.");
-    for (var i = 0; i < 10; i++) {
+      btn.disabled = true;
+      btn.innerText = "Redirection vers le paiement...";
       try {
-        var r = await fetch(PAY_API + "?id=" + encodeURIComponent(order.id) + "&ref=" + encodeURIComponent(order.ref), { cache: "no-store" });
+        var r = await fetch(PAY_API, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: name, phone: phone, email: email })
+        });
         var d = await r.json();
-        if (d.paid) { showSuccess(order, d); return; }
-        if (d.status === "declined" || d.status === "canceled" || d.status === "expired") {
-          setCheck("❌", "Paiement non abouti", "Le paiement a été annulé ou refusé. Aucun montant n'a été débité. Vous pouvez réessayer.", "Réessayer", function () { show("form"); });
-          return;
-        }
-      } catch (err) {}
-      await wait(3000);
-    }
-    setCheck("🕐", "Paiement pas encore confirmé",
-      "Si vous avez bien validé le paiement sur votre téléphone, patientez un instant puis cliquez sur « Revérifier ». En cas de souci, écrivez-nous sur WhatsApp.",
-      "Revérifier", function () { verify(order); });
-  }
+        if (!r.ok || !d.url) throw new Error(d.error || "Erreur");
+        saveOrder({ id: d.id, ref: d.ref, name: name, phone: phone, email: email, confirmed: false });
+        window.location.href = d.url;
+      } catch (err) {
+        alert("Impossible de lancer le paiement. Réessayez dans un instant ou écrivez-nous sur WhatsApp.");
+        btn.disabled = false;
+        btn.innerText = "Régler 6 750 FCFA";
+      }
+    };
 
-  // 5) Au chargement : retour de FedaPay ?
-  var order = loadOrder();
-  var params = new URLSearchParams(window.location.search);
-  if (params.get("paid") === "1") {
-    history.replaceState(null, "", window.location.pathname);
-    if (order && order.id && order.ref) {
-      verify(order);
-    } else {
-      setCheck("⚠️", "Commande introuvable",
-        "Nous ne retrouvons pas votre commande sur cet appareil. Si vous avez payé, écrivez-nous sur WhatsApp avec votre nom et votre numéro.",
-        "Écrire sur WhatsApp", function () { window.open(WA, "_blank"); });
+    // 3) Affichage du livre, seulement si le paiement est confirmé
+    function showSuccess(order, d) {
+      order.confirmed = true;
+      order.pdf = d.pdf;
+      order.epub = d.epub;
+      order.wa = d.whatsapp;
+      saveOrder(order);
+
+      document.getElementById("success-client-name").textContent = order.name || "";
+      document.getElementById("success-client-phone").textContent = order.phone || "";
+      var label = stepSuccess.querySelector("span");
+      if (label) label.textContent = "Paiement confirmé";
+
+      var dl = stepSuccess.querySelector("a[onclick], a[data-dl]");
+      if (dl) {
+        dl.removeAttribute("onclick");
+        dl.setAttribute("data-dl", "1");
+        dl.href = d.pdf || "#";
+        dl.target = "_blank";
+        dl.rel = "noopener noreferrer";
+        dl.textContent = "📥 Télécharger le livre (PDF)";
+
+        var old = document.getElementById("dl-epub");
+        if (old) old.remove();
+        if (d.epub) {
+          var dl2 = dl.cloneNode(true);
+          dl2.id = "dl-epub";
+          dl2.href = d.epub;
+          dl2.textContent = "📥 Télécharger la version EPUB";
+          dl2.classList.add("mt-2");
+          dl.parentNode.insertBefore(dl2, dl.nextSibling);
+        }
+      }
+
+      var waLink = d.whatsapp || WA;
+      var msg = encodeURIComponent(
+        "Bonjour Epiphane, j'ai payé le livre « Comprendre la sécurité informatique ».\n\n- Nom : " +
+        (order.name || "") + "\n- Téléphone : " + (order.phone || "") +
+        "\n- E-mail : " + (order.email || "") +
+        "\n\nMerci de m'ajouter à la communauté privée."
+      );
+      var wl = document.getElementById("success-wa-link");
+      if (wl) wl.href = waLink + "?text=" + msg;
+
+      show("success");
+      addReturnButton(order);
     }
-  } else if (order && order.confirmed && order.pdf) {
-    addReturnButton(order);
-  }
-})();
-</script>
-<!-- ============ FIN DU BLOC PAIEMENT ============ -->
+
+    // Bouton pour retrouver son livre plus tard (même appareil)
+    function addReturnButton(order) {
+      if (document.getElementById("my-book-btn")) return;
+      var b = document.createElement("button");
+      b.id = "my-book-btn";
+      b.type = "button";
+      b.textContent = "📥 Retrouver mon livre";
+      b.className = "fixed bottom-4 left-4 z-40 px-4 py-3 rounded-xl bg-brandBlue text-white text-xs font-black shadow-xl";
+      b.onclick = function () {
+        showSuccess(order, { pdf: order.pdf, epub: order.epub, whatsapp: order.wa });
+      };
+      document.body.appendChild(b);
+    }
+
+    // 4) Vérification auprès du serveur (qui interroge FedaPay)
+    function wait(ms) { return new Promise(function (res) { setTimeout(res, ms); }); }
+
+    async function verify(order) {
+      setCheck("⏳", "Vérification du paiement...", "Merci de patienter quelques secondes. Ne fermez pas cette page.");
+      for (var i = 0; i < 10; i++) {
+        try {
+          var r = await fetch(PAY_API + "?id=" + encodeURIComponent(order.id) + "&ref=" + encodeURIComponent(order.ref), { cache: "no-store" });
+          var d = await r.json();
+          if (d.paid) { showSuccess(order, d); return; }
+          if (d.status === "declined" || d.status === "canceled" || d.status === "expired") {
+            setCheck("❌", "Paiement non abouti", "Le paiement a été annulé ou refusé. Aucun montant n'a été débité. Vous pouvez réessayer.", "Réessayer", function () { show("form"); });
+            return;
+          }
+        } catch (err) {}
+        await wait(3000);
+      }
+      setCheck("🕐", "Paiement pas encore confirmé",
+        "Si vous avez bien validé le paiement sur votre téléphone, patientez un instant puis cliquez sur « Revérifier ». En cas de souci, écrivez-nous sur WhatsApp.",
+        "Revérifier", function () { verify(order); });
+    }
+
+    // 5) Au chargement : retour de FedaPay ?
+    var order = loadOrder();
+    var params = new URLSearchParams(window.location.search);
+    if (params.get("paid") === "1") {
+      history.replaceState(null, "", window.location.pathname);
+      if (order && order.id && order.ref) {
+        verify(order);
+      } else {
+        setCheck("⚠️", "Commande introuvable",
+          "Nous ne retrouvons pas votre commande sur cet appareil. Si vous avez payé, écrivez-nous sur WhatsApp avec votre nom et votre numéro.",
+          "Écrire sur WhatsApp", function () { window.open(WA, "_blank"); });
+      }
+    } else if (order && order.confirmed && order.pdf) {
+      addReturnButton(order);
+    }
+  })();
+  </script>
 </body>
 </html>
